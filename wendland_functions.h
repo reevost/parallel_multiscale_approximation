@@ -1,14 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 #include <math.h>
-#include "cblas.h"
 
-//separation distance and fill distance
+#ifndef PARALLEL_MULTISCALE_APPROXIMATION_WENDLAND_FUNCTIONS_H
+#define PARALLEL_MULTISCALE_APPROXIMATION_WENDLAND_FUNCTIONS_H
 
-FILE *file_pointer;
-
-unsigned int prod (unsigned int end, unsigned int begin){
+unsigned int prod(unsigned int end, unsigned int begin){
     if (begin == end){
         return 1;
     }
@@ -55,8 +52,6 @@ double curly_bracket_operator(int nu, int grade){
 
 }
 
-#pragma clang diagnostic push // to avoid errors notifications
-#pragma ide diagnostic ignored "misc-no-recursion"
 double beta_for_wendland_function(int j, int k_plus_one, int nu){
     if (j == 0 && k_plus_one == 0){
         return 1;
@@ -67,7 +62,7 @@ double beta_for_wendland_function(int j, int k_plus_one, int nu){
         if (j-1 < 0){
             for (int n = 0; n < k_plus_one ; n++) {
                 coefficient_sum += beta_for_wendland_function(n, k, nu) * square_bracket_operator(n+1, n-j+1)/
-                                                                          curly_bracket_operator(nu+2*k-n+1, n-j+2);
+                                   curly_bracket_operator(nu+2*k-n+1, n-j+2);
             }
             return coefficient_sum;
         }
@@ -80,8 +75,8 @@ double beta_for_wendland_function(int j, int k_plus_one, int nu){
         }
     }
 }
-#pragma clang diagnostic pop
 
+// TO DO: add integration part
 double wendland_function(double r, double k, int d) {
     // r "points" where the function is evaluated. r is supposed to be ||x-y|| i.e. the norm of some point difference, so r in R^+.
     // k is degree of the function, who is C^2k.
@@ -109,63 +104,4 @@ double wendland_function(double r, double k, int d) {
     }
 }
 
-double separation_distance(double * points){
-
-}
-
-double fill_distance;
-
-int main(){
-    openblas_set_num_threads(5);
-
-    file_pointer = fopen("/app/home/lotf/CLionProjects/parallel_multiscale_approximation/data_2D_few.csv", "r");
-    char data_line[100];
-    const size_t total_number_of_points = 10000; // TO DO: implement the detection of this value
-
-    // find out the dimension
-    fgets(data_line, sizeof data_line, file_pointer);
-    char * token;
-    int temp_dim = 0;
-    token = strtok(data_line, ",");
-    while (token != NULL)
-    {
-        temp_dim ++;
-        token = strtok(NULL, ",");
-    }
-    const int dim = temp_dim;
-    printf("dim = %d\n", dim);
-    // back flow to avoid data loss is needed!
-    fseek(file_pointer, 0, SEEK_SET);
-
-    // allocate the memory for the matrix of points.
-    int index = 0, temp_index;
-    double **data = (double **) malloc(total_number_of_points * sizeof (double *));
-    for (temp_index = 0; temp_index < total_number_of_points; temp_index ++)
-    {
-        data[temp_index] = (double *) malloc(dim * sizeof (double));
-    }
-
-    // read values from file and store them in the matrix defined above.
-    while (fgets(data_line, sizeof data_line, file_pointer))
-    {
-        puts(data_line);
-        token = strtok(data_line, ",");
-        printf("token %s\n", token);
-        temp_dim = 0;
-        while (token != NULL)
-        {
-            data[index][temp_dim] = strtod(token, NULL);
-            printf("dd %f, dim %d, index %d\n", data[index][temp_dim], temp_dim, index);
-            token = strtok(NULL, ",");
-            temp_dim ++;
-        }
-        index ++;
-
-    }
-    fclose(file_pointer);
-    // here I have successfully imported the values (double format) from the file into the 2-pointer data!
-
-
-
-    return 0;
-}
+#endif //PARALLEL_MULTISCALE_APPROXIMATION_WENDLAND_FUNCTIONS_H
