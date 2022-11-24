@@ -25,7 +25,7 @@ int main(){
         temp_dim ++;
         token = strtok(NULL, ",");
     }
-    const unsigned int dim = temp_dim-1;
+    const int dim = temp_dim-1;
     printf("dim: %d\n", dim); // here we assume function of with real values, i.e. 1-dimensional.
     // find out the number of points
     int temp_number_of_points =1;
@@ -196,13 +196,13 @@ int main(){
                 cg_j++;
                 printf("cg iteration %d: \n2-norm of the residual: %f\n", cg_j,
                        cblas_dnrm2(points_on_this_level, residual_list[cg_j], 1));
-                /* PRINTS AND DEBUG OF CG */
-                printf("t_j = "); for (int pp = 0; pp < points_on_this_level; ++pp) {printf("%f, ", t_j[pp]);} printf("\n");
+                // PRINTS AND DEBUG OF CG
+                /*printf("t_j = "); for (int pp = 0; pp < points_on_this_level; ++pp) {printf("%f, ", t_j[pp]);} printf("\n");
                 printf("a_j = %f\n", a_j);
                 printf("x_j+1 = "); for (int pp = 0; pp < points_on_this_level; ++pp) {printf("%f, ", alpha_j_list[cg_j][pp]);} printf("\n");
                 printf("r_j+1 = "); for (int pp = 0; pp < points_on_this_level; ++pp) {printf("%f, ", residual_list[cg_j][pp]);} printf("\n");
                 printf("b_j = %f\n", b_j);
-                printf("dir_j+1 = "); for (int pp = 0; pp < points_on_this_level; ++pp) {printf("%f, ", direction_j[pp]);} printf("\n");
+                printf("dir_j+1 = "); for (int pp = 0; pp < points_on_this_level; ++pp) {printf("%f, ", direction_j[pp]);} printf("\n");*/
             }// endwhile
             // Now I have a list of solutions and residuals for every step. However, I simply store the result, i.e. alpha[cg_j] on the solution vector
             for (int i = 0; i < points_on_this_level; i++) {
@@ -223,7 +223,7 @@ int main(){
     // s_j = sum_{i=1}^{N_j} alpha_i^(j) Phi_j(dot, \x_i^(j))
 
     // domain separation distance
-    double threshold = 0.1;
+    double threshold = 0.01;
     // If we assume that our domain is within [0,1]^d, then
     double min_vector[dim], max_vector[dim];
     int partial_temp_points[dim+1]; int total_temp_points = 1; partial_temp_points[0] = 1;
