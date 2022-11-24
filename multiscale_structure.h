@@ -25,7 +25,7 @@ double separation_distance(double ** points, unsigned int dim_, unsigned int num
             }
         }
     }
-    return minimum;
+    return minimum/2;
 }
 
 double fill_distance(double ** points, unsigned int dim_, unsigned int number_of_points_, double threshold){
@@ -65,6 +65,10 @@ double fill_distance(double ** points, unsigned int dim_, unsigned int number_of
                 minimum = p_dist;
             }
         }
+        if (minimum > maximum){
+            maximum = minimum;
+        }
+
         // increase the grid by one step
         temp_grid_point[0] += threshold;
         for (int d=1; d<dim_; d++) {
@@ -76,9 +80,7 @@ double fill_distance(double ** points, unsigned int dim_, unsigned int number_of
             }
         } // end increase
 
-        if (minimum > maximum){
-            maximum = minimum;
-        }
+
     }
     return maximum;
 }
